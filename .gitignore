@@ -1,0 +1,31 @@
+*.iml
+# Compilacion y Gradle
+.kotlin
+.gradle
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!src/**/build/
+
+# Configuración local de rutas de máquina (CRITICO en Android Studio para cambiar entre Mac y PC)
+local.properties
+# Metadatos locales de JetBrains y macOS
+.idea/
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+node_modules/
+
+# Entornos de iOS / Xcode locales
+iosApp/Pods/
+iosApp/Build/
+*.xcuserdata/
+
+# Variables de entorno privadas (si se crean en el futuro)
+.env
