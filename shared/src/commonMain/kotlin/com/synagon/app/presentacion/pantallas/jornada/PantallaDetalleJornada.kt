@@ -125,7 +125,7 @@ fun ContenidoPantallaDetalleJornada(
                         Text(
                             text = "${estadoUi.nombreJugadorActual} (${estadoUi.rolUsuario.etiqueta})",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
+                            color = ColoresSynagon.GrisPiedraJonica,
                         )
                     }
                 },
@@ -136,8 +136,8 @@ fun ContenidoPantallaDetalleJornada(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = ColoresSynagon.PizarraEspartana,
+                    titleContentColor = ColoresSynagon.BlancoMarmol,
                 ),
             )
         },
@@ -241,7 +241,7 @@ private fun SelectorRolPrueba(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(if (seleccionado) Color.White else Color.Transparent)
+                    .background(if (seleccionado) ColoresSynagon.OroOlimpico else Color.Transparent)
                     .clickable { alCambiarRol(rol) }
                     .padding(horizontal = 10.dp, vertical = 5.dp),
             ) {
@@ -249,7 +249,7 @@ private fun SelectorRolPrueba(
                     text = rol.etiqueta,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = if (seleccionado) FontWeight.Bold else FontWeight.Medium,
-                    color = if (seleccionado) MaterialTheme.colorScheme.primary else Color.White,
+                    color = if (seleccionado) ColoresSynagon.AzulEgeo else ColoresSynagon.BlancoMarmol,
                 )
             }
         }

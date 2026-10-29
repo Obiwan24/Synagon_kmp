@@ -23,19 +23,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.synagon.app.inyeccion.contenedorKoinSynagon
+import com.synagon.app.presentacion.navegacion.RutaSynagon
+import com.synagon.app.presentacion.pantallas.acceso.PantallaAcceso
 import com.synagon.app.presentacion.pantallas.acta.PantallaSubirActa
 import com.synagon.app.presentacion.pantallas.clasificacion.PantallaClasificacionLiga
 import com.synagon.app.presentacion.pantallas.estadisticas.PantallaEstadisticasEquipo
+import com.synagon.app.presentacion.pantallas.informacion.PantallaPrivacidad
+import com.synagon.app.presentacion.pantallas.informacion.PantallaSobreSynagon
 import com.synagon.app.presentacion.pantallas.jornada.PantallaDetalleJornada
 import com.synagon.app.presentacion.tema.ColoresSynagon
 import com.synagon.app.presentacion.tema.TemaSynagon
 import org.koin.compose.KoinIsolatedContext
 
 /**
- * Destinos principales del selector de navegación inferior temporal de Synagon.
+ * Destinos internos del panel principal de competición tras iniciar sesión.
  */
-private enum class SeccionNavegacionSynagon(
+private enum class SeccionPanelCompeticion(
     val etiqueta: String,
     val insignia: String,
 ) {
@@ -50,20 +57,75 @@ private enum class SeccionNavegacionSynagon(
 fun App() {
     KoinIsolatedContext(context = contenedorKoinSynagon) {
         TemaSynagon {
-            ContenedorPrincipalSynagon()
+            GrafoNavegacionSynagon()
+        }
+    }
+}
+
+/**
+ * Grafo de navegación principal tipado con Compose Navigation.
+ * Define [RutaSynagon.Acceso] como destino inicial.
+ */
+@Composable
+private fun GrafoNavegacionSynagon() {
+    val controladorNavegacion = rememberNavController()
+
+    NavHost(
+        navController = controladorNavegacion,
+        startDestination = RutaSynagon.Acceso,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        composable<RutaSynagon.Acceso> {
+            PantallaAcceso(
+                alAccederAlPanelPrincipal = {
+                    controladorNavegacion.navigate(RutaSynagon.PanelPrincipal) {
+                        popUpTo(RutaSynagon.Acceso) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                alIrASobreSynagon = {
+                    controladorNavegacion.navigate(RutaSynagon.SobreSynagon) {
+                        launchSingleTop = true
+                    }
+                },
+                alIrAPrivacidad = {
+                    controladorNavegacion.navigate(RutaSynagon.Privacidad) {
+                        launchSingleTop = true
+                    }
+                },
+            )
+        }
+
+        composable<RutaSynagon.SobreSynagon> {
+            PantallaSobreSynagon(
+                alVolver = { controladorNavegacion.popBackStack() },
+            )
+        }
+
+        composable<RutaSynagon.Privacidad> {
+            PantallaPrivacidad(
+                alVolver = { controladorNavegacion.popBackStack() },
+            )
+        }
+
+        composable<RutaSynagon.PanelPrincipal> {
+            PanelPrincipalSynagon()
         }
     }
 }
 
 @Composable
-private fun ContenedorPrincipalSynagon() {
-    var seccionActual by rememberSaveable { mutableStateOf(SeccionNavegacionSynagon.JORNADA_ACTUAL) }
+private fun PanelPrincipalSynagon() {
+    var seccionActual by rememberSaveable {
+        mutableStateOf(SeccionPanelCompeticion.JORNADA_ACTUAL)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = ColoresSynagon.AzulEgeo,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            BarraNavegacionInferiorTemporal(
+            BarraInferiorOlimpo(
                 seccionSeleccionada = seccionActual,
                 alSeleccionarSeccion = { seccionActual = it },
             )
@@ -75,25 +137,25 @@ private fun ContenedorPrincipalSynagon() {
                 .padding(bottom = rellenoInferior.calculateBottomPadding()),
         ) {
             when (seccionActual) {
-                SeccionNavegacionSynagon.JORNADA_ACTUAL -> PantallaDetalleJornada()
-                SeccionNavegacionSynagon.SUBIR_ACTA -> PantallaSubirActa()
-                SeccionNavegacionSynagon.CLASIFICACION -> PantallaClasificacionLiga()
-                SeccionNavegacionSynagon.ESTADISTICAS -> PantallaEstadisticasEquipo()
+                SeccionPanelCompeticion.JORNADA_ACTUAL -> PantallaDetalleJornada()
+                SeccionPanelCompeticion.SUBIR_ACTA -> PantallaSubirActa()
+                SeccionPanelCompeticion.CLASIFICACION -> PantallaClasificacionLiga()
+                SeccionPanelCompeticion.ESTADISTICAS -> PantallaEstadisticasEquipo()
             }
         }
     }
 }
 
 @Composable
-private fun BarraNavegacionInferiorTemporal(
-    seccionSeleccionada: SeccionNavegacionSynagon,
-    alSeleccionarSeccion: (SeccionNavegacionSynagon) -> Unit,
+private fun BarraInferiorOlimpo(
+    seccionSeleccionada: SeccionPanelCompeticion,
+    alSeleccionarSeccion: (SeccionPanelCompeticion) -> Unit,
 ) {
     NavigationBar(
-        containerColor = ColoresSynagon.SuperficieTarjeta,
-        tonalElevation = 6.dp,
+        containerColor = ColoresSynagon.PizarraEspartana,
+        tonalElevation = 8.dp,
     ) {
-        SeccionNavegacionSynagon.entries.forEach { seccion ->
+        SeccionPanelCompeticion.entries.forEach { seccion ->
             val activa = seccion == seccionSeleccionada
             NavigationBarItem(
                 selected = activa,
@@ -101,14 +163,18 @@ private fun BarraNavegacionInferiorTemporal(
                 icon = {
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = if (activa) ColoresSynagon.AzulPrimario else ColoresSynagon.AzulContenedor.copy(alpha = 0.5f),
+                        color = if (activa) {
+                            ColoresSynagon.OroOlimpico
+                        } else {
+                            ColoresSynagon.PizarraElevada
+                        },
                     ) {
                         Text(
                             text = seccion.insignia,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.ExtraBold,
-                            color = if (activa) Color.White else ColoresSynagon.SobreAzulContenedor,
+                            color = if (activa) ColoresSynagon.AzulEgeo else ColoresSynagon.GrisPiedraJonica,
                         )
                     }
                 },
@@ -123,8 +189,8 @@ private fun BarraNavegacionInferiorTemporal(
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = Color.Transparent,
-                    selectedTextColor = ColoresSynagon.AzulPrimario,
-                    unselectedTextColor = ColoresSynagon.TextoSecundario,
+                    selectedTextColor = ColoresSynagon.OroOlimpico,
+                    unselectedTextColor = ColoresSynagon.GrisPiedraJonica,
                 ),
             )
         }

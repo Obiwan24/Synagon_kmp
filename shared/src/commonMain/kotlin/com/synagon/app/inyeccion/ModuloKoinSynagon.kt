@@ -14,6 +14,7 @@ import com.synagon.app.dominio.casosuso.ValidarTanteoPadelCasoUso
 import com.synagon.app.dominio.repositorios.RepositorioClasificacion
 import com.synagon.app.dominio.repositorios.RepositorioEnfrentamientos
 import com.synagon.app.dominio.repositorios.RepositorioEstadisticas
+import com.synagon.app.presentacion.pantallas.acceso.AccesoViewModel
 import com.synagon.app.presentacion.pantallas.acta.ActaViewModel
 import com.synagon.app.presentacion.pantallas.clasificacion.ClasificacionViewModel
 import com.synagon.app.presentacion.pantallas.estadisticas.EstadisticasViewModel
@@ -51,6 +52,7 @@ val moduloSynagon: Module = module {
     factoryOf(::OrdenarEstadisticasEquipoCasoUso)
 
     // ViewModels de presentación MVI
+    viewModelOf(::AccesoViewModel)
     viewModelOf(::JornadaViewModel)
     viewModelOf(::ActaViewModel)
     viewModelOf(::ClasificacionViewModel)
