@@ -2,6 +2,7 @@ package com.synagon.app.presentacion.pantallas.acceso
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.synagon.app.dominio.modelos.ContextoSesionAgora
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,9 @@ import kotlinx.coroutines.launch
  * ViewModel multiplataforma bajo arquitectura MVI estricta y flujo unidireccional (UDF)
  * encargado de gestionar las transiciones de Login, Registro y navegación informativa.
  */
-class AccesoViewModel : ViewModel() {
+class AccesoViewModel(
+    private val contextoSesionAgora: ContextoSesionAgora? = null,
+) : ViewModel() {
 
     private val _estadoUi = MutableStateFlow(EstadoAccesoUi())
     val estadoUi: StateFlow<EstadoAccesoUi> = _estadoUi.asStateFlow()
@@ -142,6 +145,11 @@ class AccesoViewModel : ViewModel() {
             return
         }
 
+        contextoSesionAgora?.registrarInicioSesion(
+            identificador = usuarioLimpio,
+            contrasenaIntroducida = actual.contrasena,
+        )
+
         _estadoUi.update {
             it.copy(
                 cargando = false,
@@ -215,6 +223,13 @@ class AccesoViewModel : ViewModel() {
             )
             return
         }
+
+        contextoSesionAgora?.registrarInicioSesion(
+            identificador = usuarioLimpio,
+            contrasenaIntroducida = actual.contrasena,
+            nombreRegistro = nombreLimpio,
+            telefonoRegistro = actual.telefono,
+        )
 
         _estadoUi.update {
             it.copy(

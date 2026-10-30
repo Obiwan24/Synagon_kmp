@@ -28,8 +28,20 @@ sealed interface RutaSynagon {
     data object Privacidad : RutaSynagon
 
     /**
-     * Panel principal de competición (Jornada Actual, Subir Acta, Clasificación y Estadísticas).
+     * Pantalla Principal (Ágora de Synagon) tras el inicio de sesión con acciones de competición
+     * y listado de ligas y equipos activos.
      */
     @Serializable
-    data object PanelPrincipal : RutaSynagon
+    data object AgoraPrincipal : RutaSynagon
+
+    /**
+     * Pantalla de detalle y gestión de competición para un equipo o liga seleccionada desde el Ágora,
+     * recibiendo `ligaId`, `equipoId` y el `rol` correspondiente (`PRESIDENTE`, `CAPITAN` o `JUGADOR`).
+     */
+    @Serializable
+    data class DetalleEquipoOLiga(
+        val ligaId: String,
+        val equipoId: String? = null,
+        val rol: String,
+    ) : RutaSynagon
 }
